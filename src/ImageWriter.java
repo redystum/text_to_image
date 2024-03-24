@@ -5,12 +5,12 @@ import java.io.IOException;
 
 public class ImageWriter {
 
+    private final BufferedImage image;
     private int width;
     private int height;
-    private final BufferedImage image;
     private String outputPath;
 
-    public ImageWriter(int width, int height, String outputPath){
+    public ImageWriter(int width, int height, String outputPath) {
         this.width = width;
         this.height = height;
         this.outputPath = outputPath;
@@ -41,7 +41,7 @@ public class ImageWriter {
         this.outputPath = outputPath;
     }
 
-    public boolean create(){
+    public boolean create() {
         try {
             File outputImageFile = new File(outputPath);
             ImageIO.write(image, "png", outputImageFile);
@@ -54,7 +54,7 @@ public class ImageWriter {
         }
     }
 
-    public void setPixel(int x, int y, int r, int g, int b){
+    public void setPixel(int x, int y, int r, int g, int b) {
         int rgb = (r << 16) | (g << 8) | b;
         image.setRGB(x, y, rgb);
     }

@@ -1,10 +1,10 @@
 import java.util.Random;
 
 public class Converter {
+    Random rand = new Random();
     private String text;
     private int salt;
     private int interactionSalt;
-    Random rand = new Random();
 
     public Converter(String text, int salt, int interactionSalt) {
         this.text = text;
@@ -15,7 +15,7 @@ public class Converter {
     public Converter(String text) {
         this.text = text;
         this.salt = rand.nextInt(256);
-        this.interactionSalt = rand.nextInt(10);
+        this.interactionSalt = rand.nextInt(256);
     }
 
     public Converter(String text, boolean useSalt) {
@@ -71,16 +71,19 @@ public class Converter {
                     int decimal2 = Integer.parseInt(part2, 2);
                     int decimal3 = Integer.parseInt(part3, 2);
 
-                    int r = (int) (decimal1 / 7.0 * 255) + this.salt + this.interactionSalt * (i + j);
-                    int g = (int) (decimal2 / 7.0 * 255) + this.salt + this.interactionSalt * (i + j);
-                    int b = (int) (decimal3 / 3.0 * 255) + this.salt + this.interactionSalt * (i + j);
+                    int r = (int) (decimal1 / 7.0 * 255) + this.salt + this.interactionSalt * (i * j);
+                    int g = (int) (decimal2 / 7.0 * 255) + this.salt + this.interactionSalt * (i * j);
+                    int b = (int) (decimal3 / 3.0 * 255) + this.salt + this.interactionSalt * (i * j);
 
                     imageWriter.setPixel(i, j, adjustColor(r), adjustColor(g), adjustColor(b));
                 }
             }
         }
 
-        imageWriter.setPixel(size[0] - 1, size[1] - 1, this.salt, this.interactionSalt, adjustColor(this.salt + this.interactionSalt));
+        int left = size[0] * size[1] - text.length();
+        if (left > 255) left = 255;
+
+        imageWriter.setPixel(size[0] - 1, size[1] - 1, this.salt, this.interactionSalt, left);
 
         return imageWriter.create();
     }

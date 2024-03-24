@@ -5,12 +5,12 @@ import java.io.IOException;
 
 public class ImageReader {
 
+    private final String imagePath;
     private int width;
     private int height;
     private BufferedImage image;
-    private final String imagePath;
 
-    public ImageReader(String imagePath){
+    public ImageReader(String imagePath) {
         this.imagePath = imagePath;
         read();
     }
@@ -31,7 +31,7 @@ public class ImageReader {
         return imagePath;
     }
 
-    public boolean read(){
+    public boolean read() {
         try {
             this.image = ImageIO.read(new File(imagePath));
             this.width = image.getWidth();
@@ -43,7 +43,7 @@ public class ImageReader {
         }
     }
 
-    public int getPixel(int x, int y){
+    public int getPixel(int x, int y) {
         return image.getRGB(x, y);
     }
 
