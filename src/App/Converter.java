@@ -1,3 +1,8 @@
+package App;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Random;
 
 public class Converter {
@@ -5,6 +10,10 @@ public class Converter {
     private String text;
     private int salt;
     private int interactionSalt;
+    private int width;
+    private int height;
+
+    private String outputPath;
 
     public Converter(String text, int salt, int interactionSalt) {
         this.text = text;
@@ -49,11 +58,36 @@ public class Converter {
         this.interactionSalt = interactionSalt;
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public String getOutputPath() {
+        return outputPath;
+    }
+
+    public void setOutputPath(String outputPath) {
+        this.outputPath = outputPath;
+    }
+
     public boolean convert() {
         String text = this.text + "\0";
 
         int[] size = calculateSize(text.length());
-        ImageWriter imageWriter = new ImageWriter(size[0], size[1], "output.png");
+
+        try {
+            Path tempFilePath = Files.createTempFile("output", ".png");
+            this.outputPath = tempFilePath.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        ImageWriter imageWriter = new ImageWriter(size[0], size[1], this.outputPath);
 
         for (int i = 0; i < size[0]; i++) {
             for (int j = 0; j < size[1]; j++) {
@@ -89,9 +123,10 @@ public class Converter {
     }
 
     public int[] calculateSize(int length) {
-        int width = (int) Math.ceil(Math.sqrt(length));
-        int height = (int) Math.ceil((double) length / width);
-        return new int[]{width, height};
+        this.width = (int) Math.ceil(Math.sqrt(length));
+        this.height = (int) Math.ceil((double) length / this.width);
+
+        return new int[]{this.width, this.height};
     }
 
     public int adjustColor(int color) {
