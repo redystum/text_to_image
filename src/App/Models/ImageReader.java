@@ -1,4 +1,4 @@
-package App;
+package App.Models;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

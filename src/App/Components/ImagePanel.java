@@ -1,4 +1,4 @@
-package App.Ui;
+package App.Components;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

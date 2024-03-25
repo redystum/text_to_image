@@ -1,4 +1,6 @@
-package App.Ui;
+package App.Components;
+
+import App.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,11 +18,11 @@ import java.util.List;
 
 public class FileUploadPanel extends JPanel {
 
-    private JTextField filePathTextField;
-    private MainUI mainUI;
+    private final JTextField filePathTextField;
+    private final Main main;
 
-    public FileUploadPanel(MainUI mainUI) {
-        this.mainUI = mainUI;
+    public FileUploadPanel(Main main) {
+        this.main = main;
         setLayout(new BorderLayout());
 
         JButton browseButton = new JButton("Browse");
@@ -52,7 +54,7 @@ public class FileUploadPanel extends JPanel {
                 content.append(line).append("\n");
             }
 
-            mainUI.updateTextAreaWithFileContent(content.toString());
+            main.updateTextAreaWithFileContent(content.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

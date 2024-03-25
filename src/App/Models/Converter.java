@@ -1,4 +1,4 @@
-package App;
+package App.Models;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +12,6 @@ public class Converter {
     private int interactionSalt;
     private int width;
     private int height;
-
     private String outputPath;
 
     public Converter(String text, int salt, int interactionSalt) {

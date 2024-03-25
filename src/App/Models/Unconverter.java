@@ -1,4 +1,4 @@
-package App;
+package App.Models;
 
 public class Unconverter {
 
@@ -101,9 +101,7 @@ public class Unconverter {
                 int decimal1 = Math.round(r / 255.0f * 7);
                 int decimal2 = Math.round(g / 255.0f * 7);
                 int decimal3 = Math.round(b / 255.0f * 3);
-                String binary = String.format("%3s", Integer.toBinaryString(decimal1)).replace(' ', '0') +
-                        String.format("%3s", Integer.toBinaryString(decimal2)).replace(' ', '0') +
-                        String.format("%2s", Integer.toBinaryString(decimal3)).replace(' ', '0');
+                String binary = String.format("%3s", Integer.toBinaryString(decimal1)).replace(' ', '0') + String.format("%3s", Integer.toBinaryString(decimal2)).replace(' ', '0') + String.format("%2s", Integer.toBinaryString(decimal3)).replace(' ', '0');
 
                 sb.append((char) Integer.parseInt(binary, 2));
             }
