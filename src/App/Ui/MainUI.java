@@ -1,6 +1,8 @@
 package App.Ui;
 
 import App.Converter;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,25 +15,28 @@ import java.nio.file.StandardCopyOption;
 
 public class MainUI {
     private JPanel Jpanel1;
-    private JTextArea TextArea1;
-    private JButton GenerateBtn;
-    private ImagePanel imagePanel1;
+    private JTabbedPane tabbedPane1;
+    private JPanel Tab1;
+    private JPanel Tab2;
+    private ImagePanel ImagePanel1;
+    private JTextArea TextAria1;
     private JButton ExportBtn;
     private FileUploadPanel fileUploadPanel1;
-    private JTabbedPane tabbedPane1;
+    private JButton EncodeBtn;
     private String exportPath;
 
     public MainUI() {
-        GenerateBtn.addActionListener(new ActionListener() {
+
+        EncodeBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Converter converter = new Converter(TextArea1.getText());
+                Converter converter = new Converter(TextAria1.getText());
                 converter.convert();
                 exportPath = converter.getOutputPath();
                 System.out.println("Text has been converted to an image!");
 
-                imagePanel1.updateImage(exportPath);
-                imagePanel1.setPreferredSize(new Dimension(converter.getWidth(), converter.getHeight()));
+                ImagePanel1.updateImage(exportPath);
+                ImagePanel1.setPreferredSize(new Dimension(converter.getWidth(), converter.getHeight()));
 
                 ExportBtn.setEnabled(true);
             }
@@ -67,12 +72,18 @@ public class MainUI {
     }
 
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel( new FlatMacDarkLaf());
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
+        }
+
         MainUI mainUI = new MainUI();
         mainUI.showUI();
     }
 
     private void createUIComponents() {
-        imagePanel1 = new ImagePanel();
+        ImagePanel1 = new ImagePanel();
         fileUploadPanel1 = new FileUploadPanel(this);
     }
 
@@ -86,6 +97,6 @@ public class MainUI {
     }
 
     public void updateTextAreaWithFileContent(String string) {
-        TextArea1.setText(string);
+        TextAria1.setText(string);
     }
 }

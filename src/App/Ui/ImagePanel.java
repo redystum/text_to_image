@@ -22,7 +22,7 @@ public class ImagePanel extends JPanel {
         image = new BufferedImage(400, 400, BufferedImage.TYPE_INT_RGB);
 
         Graphics g = image.getGraphics();
-        g.setColor(Color.WHITE);
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, 400, 400);
         g.dispose();
 
