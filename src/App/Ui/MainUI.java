@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class MainUI {
     private JPanel Jpanel1;
@@ -14,6 +18,7 @@ public class MainUI {
     private ImagePanel imagePanel1;
     private JButton ExportBtn;
     private FileUploadPanel fileUploadPanel1;
+    private String exportPath;
 
     public MainUI() {
         GenerateBtn.addActionListener(new ActionListener() {
@@ -21,11 +26,34 @@ public class MainUI {
             public void actionPerformed(ActionEvent e) {
                 Converter converter = new Converter(TextArea1.getText());
                 converter.convert();
-                String outputPath = converter.getOutputPath();
+                exportPath = converter.getOutputPath();
                 System.out.println("Text has been converted to an image!");
 
-                imagePanel1.updateImage(outputPath);
+                imagePanel1.updateImage(exportPath);
                 imagePanel1.setPreferredSize(new Dimension(converter.getWidth(), converter.getHeight()));
+
+                ExportBtn.setEnabled(true);
+            }
+        });
+        ExportBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(new File(System.getProperty("java.io.tmpdir")));
+                int userSelection = fileChooser.showSaveDialog(null);
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToSave = fileChooser.getSelectedFile();
+                    File source = new File(exportPath);
+                    File dest = new File(fileToSave.getAbsolutePath());
+                    try {
+                        Files.move(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        System.out.println("Saved as file: " + fileToSave.getAbsolutePath());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
 
             }
         });
@@ -46,6 +74,7 @@ public class MainUI {
         frame.setContentPane(new MainUI().Jpanel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
