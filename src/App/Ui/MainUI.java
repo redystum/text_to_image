@@ -18,6 +18,7 @@ public class MainUI {
     private ImagePanel imagePanel1;
     private JButton ExportBtn;
     private FileUploadPanel fileUploadPanel1;
+    private JTabbedPane tabbedPane1;
     private String exportPath;
 
     public MainUI() {
@@ -40,13 +41,19 @@ public class MainUI {
             public void actionPerformed(ActionEvent e) {
 
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File(System.getProperty("java.io.tmpdir")));
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 int userSelection = fileChooser.showSaveDialog(null);
 
                 if (userSelection == JFileChooser.APPROVE_OPTION) {
                     File fileToSave = fileChooser.getSelectedFile();
                     File source = new File(exportPath);
-                    File dest = new File(fileToSave.getAbsolutePath());
+                    String destPath = "";
+                    if (fileToSave.getAbsolutePath().endsWith(".png"))
+                        destPath = fileToSave.getAbsolutePath();
+                    else
+                        destPath = fileToSave.getAbsolutePath() + ".png";
+
+                    File dest = new File(destPath);
                     try {
                         Files.move(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
                         System.out.println("Saved as file: " + fileToSave.getAbsolutePath());
