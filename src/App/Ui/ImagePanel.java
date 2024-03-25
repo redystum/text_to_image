@@ -38,24 +38,17 @@ public class ImagePanel extends JPanel {
     }
 
     public void updateImage(String imagePath) {
-        new Thread(() -> {
-            try {
-                image = ImageIO.read(new File(imagePath));
-                System.out.println("Image has been updated to: " + imagePath);
-                System.out.println("Width: " + image.getWidth(null));
-                SwingUtilities.invokeLater(() -> {
-                    repaint();
-                    revalidate();
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        try {
+            image = ImageIO.read(new File(imagePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        repaint();
     }
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(400, 400);
+        return new Dimension(400, 400); // Set preferred size of the panel
     }
 
 }

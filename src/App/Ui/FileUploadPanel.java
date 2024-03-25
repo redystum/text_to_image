@@ -1,7 +1,5 @@
 package App.Ui;
 
-import App.MainUI;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -53,7 +51,7 @@ public class FileUploadPanel extends JPanel {
             while ((line = reader.readLine()) != null) {
                 content.append(line).append("\n");
             }
-            // Atualiza o TextArea1 no MainUI com o conteúdo do arquivo
+
             mainUI.updateTextAreaWithFileContent(content.toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,7 +67,7 @@ public class FileUploadPanel extends JPanel {
                 if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                     List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                     if (files.size() > 0) {
-                        File droppedFile = files.get(0); // Only handle the first dropped file
+                        File droppedFile = files.get(0);
                         filePathTextField.setText(droppedFile.getAbsolutePath());
                         readFile(droppedFile);
                     }

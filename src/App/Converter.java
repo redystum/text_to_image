@@ -74,6 +74,7 @@ public class Converter {
         this.outputPath = outputPath;
     }
 
+
     public boolean convert() {
         String text = this.text + "\0";
 
