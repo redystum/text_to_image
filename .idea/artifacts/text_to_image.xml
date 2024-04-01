@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jpackage" name="text_to_image">
+    <output-path>$PROJECT_DIR$/out/artifacts/text_to_image</output-path>
+    <root id="root">
+      <element id="archive" name="text_to_image.jar">
+        <element id="module-output" name="text_to_image" />
+      </element>
+    </root>
+  </artifact>
+</component>

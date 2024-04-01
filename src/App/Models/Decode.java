@@ -1,6 +1,6 @@
 package App.Models;
 
-public class Unconverter {
+public class Decode {
 
     private final ImageReader imageReader;
     private final int width;
@@ -9,7 +9,7 @@ public class Unconverter {
     private int salt;
     private int interactionSalt;
 
-    public Unconverter(String imagePath) {
+    public Decode(String imagePath) {
         this.imageReader = new ImageReader(imagePath);
         this.width = imageReader.getWidth();
         this.height = imageReader.getHeight();
@@ -19,7 +19,7 @@ public class Unconverter {
         this.left = getLeft();
     }
 
-    public Unconverter(String imagePath, int salt, int interactionSalt) {
+    public Decode(String imagePath, int salt, int interactionSalt) {
         this.imageReader = new ImageReader(imagePath);
         this.width = imageReader.getWidth();
         this.height = imageReader.getHeight();
@@ -70,7 +70,7 @@ public class Unconverter {
         return new int[]{r, g};
     }
 
-    public String unconvert() {
+    public String convert() {
         if (!imageReader.read()) {
             return null;
         }

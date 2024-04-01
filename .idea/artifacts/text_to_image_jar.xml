@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="text_to_image:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/text_to_image_jar</output-path>
+    <root id="archive" name="text_to_image.jar">
+      <element id="module-output" name="text_to_image" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/flatlaf-3.4.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

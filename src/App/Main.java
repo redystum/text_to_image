@@ -3,9 +3,11 @@ package App;
 import App.Components.FileUploadPanel;
 import App.Components.ImagePanel;
 import App.Models.Converter;
+import App.Models.Decode;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,38 +17,47 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 public class Main {
-    private JPanel Jpanel1;
-    private JTabbedPane tabbedPane1;
+    private String exportPath;
+    private String importPath;
+
+    private JPanel MainPanel;
+    private JTabbedPane TabedPanel;
     private JPanel Tab1;
     private JPanel Tab2;
-    private ImagePanel ImagePanel1;
-    private JTextArea TextAria1;
-    private JButton ExportBtn;
-    private FileUploadPanel fileUploadPanel1;
+    private ImagePanel ConvertedImagePanel;
+    private JTextArea InputTextArea;
+    private JButton ExportImageBtn;
+    private FileUploadPanel TextInputFileUploadPanel;
     private JButton EncodeBtn;
-    private String exportPath;
+    private ImagePanel InputImagePanel;
+    private FileUploadPanel ImageInputFileUploadPanel;
+    private JTextArea OutputTextArea;
+    private JButton DecodeBtn;
+    private JButton ExportTextBtn;
 
     public Main() {
 
         EncodeBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Converter converter = new Converter(TextAria1.getText());
+                Converter converter = new Converter(InputTextArea.getText());
                 converter.convert();
                 exportPath = converter.getOutputPath();
                 System.out.println("Text has been converted to an image!");
 
-                ImagePanel1.updateImage(exportPath);
-                ImagePanel1.setPreferredSize(new Dimension(converter.getWidth(), converter.getHeight()));
+                ConvertedImagePanel.updateImage(exportPath);
+                ConvertedImagePanel.setPreferredSize(new Dimension(converter.getWidth(), converter.getHeight()));
 
-                ExportBtn.setEnabled(true);
+                ExportImageBtn.setEnabled(true);
             }
         });
-        ExportBtn.addActionListener(new ActionListener() {
+        ExportImageBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
                 JFileChooser fileChooser = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG Images", "png");
+                fileChooser.setFileFilter(filter);
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 int userSelection = fileChooser.showSaveDialog(null);
 
@@ -60,12 +71,50 @@ public class Main {
                     File dest = new File(destPath);
                     try {
                         Files.move(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Saved as file: " + fileToSave.getAbsolutePath());
+                        System.out.println("Saved as file: " + destPath);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
                 }
 
+            }
+        });
+        DecodeBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Decode decode = new Decode(importPath);
+                String output = decode.convert();
+                OutputTextArea.setText(output);
+
+                ExportTextBtn.setEnabled(true);
+            }
+        });
+        ExportTextBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files", "txt");
+                fileChooser.setFileFilter(filter);
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                int userSelection = fileChooser.showSaveDialog(null);
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToSave = fileChooser.getSelectedFile();
+
+                    String output = new Decode(importPath).convert();
+
+                    if (!fileToSave.getAbsolutePath().endsWith(".txt")) {
+                        fileToSave = new File(fileToSave.getAbsolutePath() + ".txt");
+                    }
+
+                    try {
+                        Files.write(fileToSave.toPath(), output.getBytes());
+                        System.out.println("Saved as file: " + fileToSave.getAbsolutePath());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                }
             }
         });
     }
@@ -82,20 +131,33 @@ public class Main {
     }
 
     private void createUIComponents() {
-        ImagePanel1 = new ImagePanel();
-        fileUploadPanel1 = new FileUploadPanel(this);
+        ConvertedImagePanel = new ImagePanel(Color.BLACK);
+        TextInputFileUploadPanel = new FileUploadPanel(this, FileUploadPanel.FileUploadType.TEXT);
+
+        InputImagePanel = new ImagePanel(Color.BLACK, this);
+        ImageInputFileUploadPanel = new FileUploadPanel(this, FileUploadPanel.FileUploadType.IMAGE);
     }
 
     public void showUI() {
         JFrame frame = new JFrame("Text to Image Converter");
-        frame.setContentPane(new Main().Jpanel1);
+        frame.setContentPane(new Main().MainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
-    public void updateTextAreaWithFileContent(String string) {
-        TextAria1.setText(string);
+    public void updateInputTextArea(String string) {
+        InputTextArea.setText(string);
+    }
+
+    public void updateImageInputPath(String string) {
+        ImageInputFileUploadPanel.setFilePath(string);
+        this.importPath = string;
+    }
+
+    public void setInputPathText(String absolutePath) {
+        InputImagePanel.updateImage(absolutePath);
+        this.importPath = absolutePath;
     }
 }

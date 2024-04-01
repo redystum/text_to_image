@@ -3,6 +3,7 @@ package App.Components;
 import App.Main;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -20,9 +21,11 @@ public class FileUploadPanel extends JPanel {
 
     private final JTextField filePathTextField;
     private final Main main;
+    private final FileUploadType type;
 
-    public FileUploadPanel(Main main) {
+    public FileUploadPanel(Main main, FileUploadType type) {
         this.main = main;
+        this.type = type;
         setLayout(new BorderLayout());
 
         JButton browseButton = new JButton("Browse");
@@ -33,17 +36,34 @@ public class FileUploadPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                FileNameExtensionFilter filter = null;
+                if (type == FileUploadType.IMAGE) {
+                    filter = new FileNameExtensionFilter("PNG Images", "png");
+                } else if (type == FileUploadType.TEXT) {
+                    filter = new FileNameExtensionFilter("Text Files", "txt");
+                }
+                fileChooser.setFileFilter(filter);
                 int returnValue = fileChooser.showOpenDialog(null);
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
-                    filePathTextField.setText(selectedFile.getAbsolutePath());
-                    readFile(selectedFile);
+
+                    if (type == FileUploadType.IMAGE) {
+                        filePathTextField.setText(selectedFile.getAbsolutePath());
+                        main.setInputPathText(selectedFile.getAbsolutePath());
+                    } else if (type == FileUploadType.TEXT) {
+                        filePathTextField.setText(selectedFile.getAbsolutePath());
+                        readFile(selectedFile);
+                    }
                 }
             }
         });
 
         add(filePathTextField, BorderLayout.CENTER);
         add(browseButton, BorderLayout.EAST);
+    }
+
+    public void setFilePath(String path) {
+        filePathTextField.setText(path);
     }
 
     private void readFile(File file) {
@@ -54,10 +74,14 @@ public class FileUploadPanel extends JPanel {
                 content.append(line).append("\n");
             }
 
-            main.updateTextAreaWithFileContent(content.toString());
+            main.updateInputTextArea(content.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public enum FileUploadType {
+        IMAGE, TEXT
     }
 
     private class FileDropTarget extends DropTarget {
@@ -71,7 +95,12 @@ public class FileUploadPanel extends JPanel {
                     if (files.size() > 0) {
                         File droppedFile = files.get(0);
                         filePathTextField.setText(droppedFile.getAbsolutePath());
-                        readFile(droppedFile);
+
+                        if (type == FileUploadType.IMAGE) {
+                            main.setInputPathText(droppedFile.getAbsolutePath());
+                        } else if (type == FileUploadType.TEXT) {
+                            readFile(droppedFile);
+                        }
                     }
                 }
             } catch (Exception ex) {

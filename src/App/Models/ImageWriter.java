@@ -16,7 +16,7 @@ public class ImageWriter {
         this.width = width;
         this.height = height;
         this.outputPath = outputPath;
-        this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
 
     public int getWidth() {
@@ -56,8 +56,13 @@ public class ImageWriter {
         }
     }
 
+    public void setPixel(int x, int y, int r, int g, int b, int a) {
+        int rgb = (a << 24) | (r << 16) | (g << 8) | b;
+        image.setRGB(x, y, rgb);
+    }
+
     public void setPixel(int x, int y, int r, int g, int b) {
-        int rgb = (r << 16) | (g << 8) | b;
+        int rgb = (255 << 24) | (r << 16) | (g << 8) | b;
         image.setRGB(x, y, rgb);
     }
 
