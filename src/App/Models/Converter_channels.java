@@ -75,9 +75,11 @@ public class Converter_channels {
 
 
     public boolean convert() {
-        String text = this.text + "\0\0\0\0";
+        int textOriginalLenght = text.length();
+        String text = this.text;
 
-        int[] size = calculateSize(text.length() / 4);
+        int textSize = (int) Math.ceil((double) text.length() / 4) + 1;
+        int[] size = calculateSize(textSize);
 
         try {
             Path tempFilePath = Files.createTempFile("output", ".png");
@@ -91,20 +93,21 @@ public class Converter_channels {
         int left = 0;
 
         // each pixel have 4 letters, each letter on a channel (rgba)
+        int letterIndex = 0;
         for (int i = 0; i < size[0]; i++) {
             for (int j = 0; j < size[1]; j++) {
+
                 int index = i * size[1] + j;
-                if (index < text.length() / 4) {
+                if (index < textSize) {
                     int pixel = 0;
                     for (int k = 0; k < 4; k++) {
-                        int letterIndex = index * 4 + k;
-                        if (letterIndex < text.length()) {
-                            pixel = pixel << 8;
+                        pixel = pixel << 8;
+                        if (letterIndex < textOriginalLenght) {
                             pixel = pixel | text.charAt(letterIndex);
                         } else {
-                            pixel = pixel << 8;
                             left++;
                         }
+                        letterIndex++;
                     }
                     imageWriter.setPixel(i, j, (pixel >> 24) & 0xFF, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF);
                 } else {

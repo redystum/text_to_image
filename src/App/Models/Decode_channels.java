@@ -79,31 +79,34 @@ public class Decode_channels {
 
         System.out.println("salt: " + salt);
         System.out.println("interactionSalt: " + interactionSalt);
-
-        //pixel: 1936682341
-        //pixel: 544499064
-        //pixel: 1948279137
-        //pixel: 1635416698
-        //pixel: 1635385344
-        //salt: 191
-        //interactionSalt: 30
         System.out.println("left: " + left);
 
+        int totalSize = width * height * 4;
+
+        int current = 0;
         for (int j = 0; j < width; j++) {
             for (int i = 0; i < height; i++) {
 
-                if (i == height - 1 && j >= width - left) {
-                    continue;
-                }
-
                 int rgb = imageReader.getPixel(j, i);
 
-                System.out.println("rgb: " + rgb);
-                int r = (rgb >> 16) & 0xFF;
-                int g = (rgb >> 8) & 0xFF;
-                int b = rgb & 0xFF;
-                int a = (rgb >> 24) & 0xFF; // alpha channel
+                int r = 0, g = 0, b = 0, a = 0;
 
+                System.out.println("rgb: " + rgb);
+                if (current < totalSize - left)
+                    r = (rgb >> 16) & 0xFF;
+                current++;
+
+                if (current < totalSize - left)
+                    g = (rgb >> 8) & 0xFF;
+                current++;
+
+                if (current < totalSize - left)
+                    b = rgb & 0xFF;
+                current++;
+
+                if (current < totalSize - left)
+                    a = (rgb >> 24) & 0xFF;
+                current++;
 
                 sb.append((char) r);
                 sb.append((char) g);
@@ -111,7 +114,6 @@ public class Decode_channels {
                 sb.append((char) a);
             }
         }
-
 
 
 //        for (int i = 0; i < width; i++) {
