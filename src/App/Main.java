@@ -3,7 +3,9 @@ package App;
 import App.Components.FileUploadPanel;
 import App.Components.ImagePanel;
 import App.Models.Converter;
+import App.Models.Converter_channels;
 import App.Models.Decode;
+import App.Models.Decode_channels;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import javax.swing.*;
@@ -34,21 +36,35 @@ public class Main {
     private JTextArea OutputTextArea;
     private JButton DecodeBtn;
     private JButton ExportTextBtn;
+    private JCheckBox useChannelsEncodeCheck;
+    private JCheckBox useChannelsDecodeCheck;
 
     public Main() {
 
         EncodeBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Converter converter = new Converter(InputTextArea.getText());
-                converter.convert();
-                exportPath = converter.getOutputPath();
-                System.out.println("Text has been converted to an image!");
+                if (useChannelsEncodeCheck.isSelected()) {
+                    Converter_channels converter = new Converter_channels(InputTextArea.getText());
+                    converter.convert();
+                    exportPath = converter.getOutputPath();
+                    System.out.println("Text has been converted to an image!");
 
-                ConvertedImagePanel.updateImage(exportPath);
-                ConvertedImagePanel.setPreferredSize(new Dimension(converter.getWidth(), converter.getHeight()));
+                    ConvertedImagePanel.updateImage(exportPath);
+                    ConvertedImagePanel.setPreferredSize(new Dimension(converter.getWidth(), converter.getHeight()));
 
-                ExportImageBtn.setEnabled(true);
+                    ExportImageBtn.setEnabled(true);
+                } else {
+                    Converter converter = new Converter(InputTextArea.getText());
+                    converter.convert();
+                    exportPath = converter.getOutputPath();
+                    System.out.println("Text has been converted to an image!");
+
+                    ConvertedImagePanel.updateImage(exportPath);
+                    ConvertedImagePanel.setPreferredSize(new Dimension(converter.getWidth(), converter.getHeight()));
+
+                    ExportImageBtn.setEnabled(true);
+                }
             }
         });
         ExportImageBtn.addActionListener(new ActionListener() {
@@ -82,11 +98,19 @@ public class Main {
         DecodeBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Decode decode = new Decode(importPath);
-                String output = decode.convert();
-                OutputTextArea.setText(output);
+                if (useChannelsDecodeCheck.isSelected()) {
+                    Decode_channels decode = new Decode_channels(importPath);
+                    String output = decode.convert();
+                    OutputTextArea.setText(output);
 
-                ExportTextBtn.setEnabled(true);
+                    ExportTextBtn.setEnabled(true);
+                } else {
+                    Decode decode = new Decode(importPath);
+                    String output = decode.convert();
+                    OutputTextArea.setText(output);
+
+                    ExportTextBtn.setEnabled(true);
+                }
             }
         });
         ExportTextBtn.addActionListener(new ActionListener() {
