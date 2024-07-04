@@ -110,6 +110,11 @@ public class Converter {
                     int b = (int) (decimal3 / 3.0 * 255) + this.salt + this.interactionSalt * (i * j);
 
                     imageWriter.setPixel(i, j, adjustColor(r), adjustColor(g), adjustColor(b));
+                } else {
+                    int r = rand.nextInt(256);
+                    int g = rand.nextInt(256);
+                    int b = rand.nextInt(256);
+                    imageWriter.setPixel(i, j, r, g, b);
                 }
             }
         }

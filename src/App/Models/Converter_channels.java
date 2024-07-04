@@ -112,20 +112,19 @@ public class Converter_channels {
                     }
                     imageWriter.setPixel(i, j, (pixel >> 24) & 0xFF, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF);
                 } else {
-                    imageWriter.setPixel(i, j, 0, 0, 0, 0);
+                    int r = rand.nextInt(256);
+                    int g = rand.nextInt(256);
+                    int b = rand.nextInt(256);
+                    int a = rand.nextInt(256);
+                    imageWriter.setPixel(i, j, r, g, b, a);
                     left += 4;
                 }
             }
         }
 
         if (left > 255) left = 255;
-        System.out.println("left: " + left);
-
-        System.out.println("salt: " + salt);
-        System.out.println("interactionSalt: " + interactionSalt);
-
-
-        imageWriter.setPixel(size[0] - 1, size[1] - 1, this.salt, this.interactionSalt, left);
+        int a = rand.nextInt(256);
+        imageWriter.setPixel(size[0] - 1, size[1] - 1, this.salt, this.interactionSalt, left, a);
 
         return imageWriter.create();
     }

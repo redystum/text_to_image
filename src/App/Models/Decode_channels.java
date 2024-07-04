@@ -85,38 +85,17 @@ public class Decode_channels {
             for (int i = 0; i < height; i++) {
 
                 int rgb = imageReader.getPixel(j, i);
+                int[] shifts = {16, 8, 0, 24};
+                int[] channelValues = new int[4];
 
-                int r = 0, g = 0, b = 0, a = 0;
-
-                System.out.println("rgb: " + rgb);
-                if (current < stringSize) {
-                    r = (rgb >> 16) & 0xFF;
-                    r = adjustColor(r - this.salt - this.interactionSalt * (i * j));
-                    System.out.println("r: " + r + (char) r);
-                    sb.append((char) r);
+                for (int k = 0; k < 4; k++) {
+                    if (current < stringSize) {
+                        channelValues[k] = (rgb >> shifts[k]) & 0xFF;
+                        channelValues[k] = adjustColor(channelValues[k] - this.salt - this.interactionSalt * (i * j));
+                        sb.append((char) channelValues[k]);
+                    }
+                    current++;
                 }
-                current++;
-
-                if (current < stringSize) {
-                    g = (rgb >> 8) & 0xFF;
-                    g = adjustColor(g - this.salt - this.interactionSalt * (i * j));
-                    sb.append((char) g);
-                }
-                current++;
-
-                if (current < stringSize) {
-                    b = rgb & 0xFF;
-                    b = adjustColor(b - this.salt - this.interactionSalt * (i * j));
-                    sb.append((char) b);
-                }
-                current++;
-
-                if (current < stringSize) {
-                    a = (rgb >> 24) & 0xFF;
-                    a = adjustColor(a - this.salt - this.interactionSalt * (i * j));
-                    sb.append((char) a);
-                }
-                current++;
 
             }
         }
