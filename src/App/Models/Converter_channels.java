@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
 
-public class Converter {
+public class Converter_channels {
     Random rand = new Random();
     private String text;
     private int salt;
@@ -14,19 +14,19 @@ public class Converter {
     private int height;
     private String outputPath;
 
-    public Converter(String text, int salt, int interactionSalt) {
+    public Converter_channels(String text, int salt, int interactionSalt) {
         this.text = text;
         this.salt = salt;
         this.interactionSalt = interactionSalt;
     }
 
-    public Converter(String text) {
+    public Converter_channels(String text) {
         this.text = text;
         this.salt = rand.nextInt(256);
         this.interactionSalt = rand.nextInt(256);
     }
 
-    public Converter(String text, boolean useSalt) {
+    public Converter_channels(String text, boolean useSalt) {
         this.text = text;
         this.salt = useSalt ? rand.nextInt(256) : 0;
         this.interactionSalt = useSalt ? rand.nextInt(10) : 0;
@@ -75,9 +75,11 @@ public class Converter {
 
 
     public boolean convert() {
-        String text = this.text + "\0";
+        int textOriginalLenght = text.length();
+        String text = this.text;
 
-        int[] size = calculateSize(text.length());
+        int textSize = (int) Math.ceil((double) text.length() / 4) + 1;
+        int[] size = calculateSize(textSize);
 
         try {
             Path tempFilePath = Files.createTempFile("output", ".png");
@@ -88,41 +90,41 @@ public class Converter {
         }
 
         ImageWriter imageWriter = new ImageWriter(size[0], size[1], this.outputPath);
+        int left = 0;
 
+        // each pixel have 4 letters, each letter on a channel (rgba)
+        int letterIndex = 0;
         for (int i = 0; i < size[0]; i++) {
             for (int j = 0; j < size[1]; j++) {
-                if (i * size[1] + j < text.length()) {
-                    char c = text.charAt(i * size[1] + j);
 
-                    String binary = Integer.toBinaryString(c);
-                    binary = String.format("%8s", binary).replace(' ', '0');
-
-                    String part1 = binary.substring(0, 3);
-                    String part2 = binary.substring(3, 6);
-                    String part3 = binary.substring(6, 8);
-
-                    int decimal1 = Integer.parseInt(part1, 2);
-                    int decimal2 = Integer.parseInt(part2, 2);
-                    int decimal3 = Integer.parseInt(part3, 2);
-
-                    int r = (int) (decimal1 / 7.0 * 255) + this.salt + this.interactionSalt * (i * j);
-                    int g = (int) (decimal2 / 7.0 * 255) + this.salt + this.interactionSalt * (i * j);
-                    int b = (int) (decimal3 / 3.0 * 255) + this.salt + this.interactionSalt * (i * j);
-
-                    imageWriter.setPixel(i, j, adjustColor(r), adjustColor(g), adjustColor(b));
+                int index = i * size[1] + j;
+                if (index < textSize) {
+                    int pixel = 0;
+                    for (int k = 0; k < 4; k++) {
+                        pixel = pixel << 8;
+                        if (letterIndex < textOriginalLenght) {
+                            int pixelInt = adjustColor(text.charAt(letterIndex) + this.salt + this.interactionSalt * (i * j));
+                            pixel = pixel | pixelInt;
+                        } else {
+                            left++;
+                        }
+                        letterIndex++;
+                    }
+                    imageWriter.setPixel(i, j, (pixel >> 24) & 0xFF, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF);
                 } else {
                     int r = rand.nextInt(256);
                     int g = rand.nextInt(256);
                     int b = rand.nextInt(256);
-                    imageWriter.setPixel(i, j, r, g, b);
+                    int a = rand.nextInt(256);
+                    imageWriter.setPixel(i, j, r, g, b, a);
+                    left += 4;
                 }
             }
         }
 
-        int left = size[0] * size[1] - text.length();
         if (left > 255) left = 255;
-
-        imageWriter.setPixel(size[0] - 1, size[1] - 1, this.salt, this.interactionSalt, left);
+        int a = rand.nextInt(256);
+        imageWriter.setPixel(size[0] - 1, size[1] - 1, this.salt, this.interactionSalt, left, a);
 
         return imageWriter.create();
     }
