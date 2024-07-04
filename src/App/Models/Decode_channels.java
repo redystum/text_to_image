@@ -77,11 +77,8 @@ public class Decode_channels {
 
         StringBuilder sb = new StringBuilder();
 
-        System.out.println("salt: " + salt);
-        System.out.println("interactionSalt: " + interactionSalt);
-        System.out.println("left: " + left);
-
-        int totalSize = width * height * 4;
+        int totalSize = (width * height * 4);
+        int stringSize = totalSize - left;
 
         int current = 0;
         for (int j = 0; j < width; j++) {
@@ -92,67 +89,37 @@ public class Decode_channels {
                 int r = 0, g = 0, b = 0, a = 0;
 
                 System.out.println("rgb: " + rgb);
-                if (current < totalSize - left)
+                if (current < stringSize) {
                     r = (rgb >> 16) & 0xFF;
+                    r = adjustColor(r - this.salt - this.interactionSalt * (i * j));
+                    System.out.println("r: " + r + (char) r);
+                    sb.append((char) r);
+                }
                 current++;
 
-                if (current < totalSize - left)
+                if (current < stringSize) {
                     g = (rgb >> 8) & 0xFF;
+                    g = adjustColor(g - this.salt - this.interactionSalt * (i * j));
+                    sb.append((char) g);
+                }
                 current++;
 
-                if (current < totalSize - left)
+                if (current < stringSize) {
                     b = rgb & 0xFF;
+                    b = adjustColor(b - this.salt - this.interactionSalt * (i * j));
+                    sb.append((char) b);
+                }
                 current++;
 
-                if (current < totalSize - left)
+                if (current < stringSize) {
                     a = (rgb >> 24) & 0xFF;
+                    a = adjustColor(a - this.salt - this.interactionSalt * (i * j));
+                    sb.append((char) a);
+                }
                 current++;
 
-                sb.append((char) r);
-                sb.append((char) g);
-                sb.append((char) b);
-                sb.append((char) a);
             }
         }
-
-
-//        for (int i = 0; i < width; i++) {
-//            for (int j = 0; j < height; j++) {
-//
-//                if (i == width - 1 && j >= height - left) {
-//                    continue;
-//                }
-//
-//                int rgb = imageReader.getPixel(i, j);
-//
-//                int a = (rgb >> 24) & 0xFF;
-//                int r = (rgb >> 16) & 0xFF;
-//                int g = (rgb >> 8) & 0xFF;
-//                int b = rgb & 0xFF;
-//
-//
-////                r = adjustColor(r - salt - interactionSalt * i);
-////                g = adjustColor(g - salt - interactionSalt * i);
-////                b = adjustColor(b - salt - interactionSalt * i);
-////                a = adjustColor(a - salt - interactionSalt * i);
-//
-//
-//                //r: 78 g: 111 b: 32 a: 115
-//                //r: 97 g: 108 b: 116 a: 32
-//                //r: 101 g: 110 b: 99 a: 111
-//                //r: 100 g: 101 b: 32 a: 105
-//                //r: 109 g: 97 b: 103 a: 101
-//                //salt: 245
-//                //interactionSalt: 252
-//
-//                System.out.println("r: " + r + " g: " + g + " b: " + b + " a: " + a);
-//
-//                sb.append((char) r);
-//                sb.append((char) g);
-//                sb.append((char) b);
-//                sb.append((char) a);
-//            }
-//        }
 
         return sb.toString();
     }

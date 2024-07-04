@@ -103,7 +103,8 @@ public class Converter_channels {
                     for (int k = 0; k < 4; k++) {
                         pixel = pixel << 8;
                         if (letterIndex < textOriginalLenght) {
-                            pixel = pixel | text.charAt(letterIndex);
+                            int pixelInt = adjustColor(text.charAt(letterIndex) + this.salt + this.interactionSalt * (i * j));
+                            pixel = pixel | pixelInt;
                         } else {
                             left++;
                         }
@@ -112,7 +113,7 @@ public class Converter_channels {
                     imageWriter.setPixel(i, j, (pixel >> 24) & 0xFF, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF);
                 } else {
                     imageWriter.setPixel(i, j, 0, 0, 0, 0);
-                    left++;
+                    left += 4;
                 }
             }
         }
